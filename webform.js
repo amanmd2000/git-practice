@@ -7,6 +7,7 @@
    Done--AVOID global scope whenever possible.
    Yes--All code must be your own.
    Yes--At least 100 lines of JS code.
+   Post class work: Added input validation
 */
 (function () {
     const main = document.querySelector("main"); //for placing new HTML
