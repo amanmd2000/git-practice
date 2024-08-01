@@ -15,6 +15,32 @@
     const form = document.getElementById("newForm");
     let student;
     let sect1;
+    const errMessage = [];
+
+    //email validation
+    async function validateEmail(vE) {
+        var validRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+        let result = validRegex.test(vE);
+        if (result == false) {
+            errMessage[0] = "Please enter a valid email address.";
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    //telephone validation
+    async function validateTel(vT) {
+        var phoneno = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
+        let result = phoneno.test(vT);
+        if (result == false) {
+            errMessage[1] = "Please enter a valid phone number.";
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     formBtn.addEventListener("click", createForm);
 
     function createForm(evt) {
@@ -29,10 +55,10 @@
       <input type="text" class="lname" id="lname" placeholder="Last Name" required />
       <p></p>
       <label for="email">Email Address:<br /></label>
-      <input type="email" class="email" id="email" placeholder="Email" required />
+      <input type="email" class="email" id="email" placeholder="Email" autocomplete="email" required />
       <p></p>
       <label for="tel">Phone Number:<br /></label>
-      <input type="tel" class="phone" id="tel" placeholder="Phone Number" required />
+      <input type="tel" class="phone" id="tel" placeholder="Phone Number" autocomplete="tel-area-code" required />
       <p></p>
       <label for="address1">Address Line 1:<br /></label>
       <input type="text" class="address" id="address1" placeholder="Address">
@@ -72,8 +98,20 @@
                     document.getElementById("zip").value
                 );
                 //console.log(student);
-                submitBtn(e);
-                return student;
+                let validEmail = validateEmail(student.email);
+                // console.log(student.email);
+                // console.log(validEmail);
+                let validTel = validateTel(student.tel);
+                // console.log(student.tel);
+                // console.log(validTel);
+                if ((validEmail === true) && (validTel === true)) {
+                    submitBtn(e);
+                    return student;
+                } else {
+                    console.log(errMessage);
+                    alert(errMessage);
+                }
+                errMessage.length = [0];
             }
         });
     }
@@ -164,4 +202,7 @@
     `;
         return mailAddress;
     };
+
+
+
 })(); // All wrapped in an IIFE!
