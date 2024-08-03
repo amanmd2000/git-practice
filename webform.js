@@ -15,14 +15,28 @@
     const form = document.getElementById("newForm");
     let student;
     let sect1;
-    const errMessage = [];
+    var errMessage = "";
+
+
+    //required entry validation
+    async function required(entry, label) {
+        let input = entry;
+        let name = label;
+        if (input.length == 0) {
+            errMessage += "Please fill in the required " + document.getElementById(name).placeholder + ".\n";
+            return false;
+        } else {
+        // console.log(input, name);
+        return true;
+        }
+    }
 
     //email validation
     async function validateEmail(vE) {
         var validRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
         let result = validRegex.test(vE);
         if (result == false) {
-            errMessage[0] = "Please enter a valid email address.";
+            errMessage += "Please enter a valid email address.\n";
             return false;
         } else {
             return true;
@@ -34,7 +48,7 @@
         var phoneno = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
         let result = phoneno.test(vT);
         if (result == false) {
-            errMessage[1] = "Please enter a valid phone number.";
+            errMessage += "Please enter a valid phone number.\n";
             return false;
         } else {
             return true;
@@ -48,16 +62,16 @@
         formBtn.remove();
         form.innerHTML = `
     <div class="contact-name newForm">
-      <label for="fname">First Name:<br /></label>
+      <label for="fname">*First Name:<br /></label>
       <input type="text" class="fname" id="fname" placeholder="First Name" required />
       <p></p>
-      <label for="lname">Last Name:<br /></label>
+      <label for="lname">*Last Name:<br /></label>
       <input type="text" class="lname" id="lname" placeholder="Last Name" required />
       <p></p>
-      <label for="email">Email Address:<br /></label>
+      <label for="email">*Email Address:<br /></label>
       <input type="email" class="email" id="email" placeholder="Email" autocomplete="email" required />
       <p></p>
-      <label for="tel">Phone Number:<br /></label>
+      <label for="tel">*Phone Number:<br /></label>
       <input type="tel" class="phone" id="tel" placeholder="Phone Number" autocomplete="tel-area-code" required />
       <p></p>
       <label for="address1">Address Line 1:<br /></label>
@@ -82,7 +96,7 @@
         const btnSubmit = document.getElementById("btn-submit");
         //event listener for form submission button
         //POST method can be added for a real site
-        form.addEventListener("click", function (e) {
+        form.addEventListener("click", async function (e) {
             e.preventDefault();
             if (e.target.classList.contains("btn-submit")) {
                 //populate new object on contact object
@@ -97,21 +111,32 @@
                     document.getElementById("state").value,
                     document.getElementById("zip").value
                 );
-                //console.log(student);
-                let validEmail = validateEmail(student.email);
+                // console.log(student);
+                var entryFname = await required(student.fName, "fname");
+                var entryLname = await required(student.lName, "lname");
+                var entryEmail = await required(student.email, "email");
+                var entryTel = await required(student.tel, "tel");
+                var validEmail = await validateEmail(student.email);
                 // console.log(student.email);
                 // console.log(validEmail);
-                let validTel = validateTel(student.tel);
+                var validTel = await validateTel(student.tel);
                 // console.log(student.tel);
                 // console.log(validTel);
-                if ((validEmail === true) && (validTel === true)) {
+                if (
+                    (entryFname === true) &&
+                    (entryLname === true) &&
+                    (entryEmail === true) &&
+                    (entryTel === true) &&
+                    (validEmail === true) &&
+                    (validTel === true)
+                ) {
                     submitBtn(e);
                     return student;
                 } else {
-                    console.log(errMessage);
+                    // console.log(errMessage);
                     alert(errMessage);
                 }
-                errMessage.length = [0];
+                errMessage = "";
             }
         });
     }
